@@ -353,4 +353,5 @@ MigrationBackup/
 .DS_Store
 
 # Jetbrain Rider
-*.idea
+*.idea/
+*.sln.iml
