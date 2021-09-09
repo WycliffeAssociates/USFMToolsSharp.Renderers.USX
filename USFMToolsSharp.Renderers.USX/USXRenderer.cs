@@ -62,6 +62,15 @@ namespace USFMToolsSharp.Renderers.USX
 
             switch (input)
             {
+                case IDMarker idMarker:
+                    string code = idMarker.TextIdentifier.Substring(0, 3);
+                    var bibleName = idMarker.TextIdentifier.Substring(4);
+                    
+                    output.Append($"<book style=\"{input.Identifier}\" code=\"{code}\">");
+                    output.Append(bibleName);
+                    output.AppendLine("</book>");
+                    break;
+
                 
                 default:
                     UnrenderableTags.Add(input.Identifier);
