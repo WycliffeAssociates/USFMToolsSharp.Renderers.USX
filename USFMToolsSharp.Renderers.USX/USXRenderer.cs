@@ -42,8 +42,8 @@ namespace USFMToolsSharp.Renderers.USX
 
             if (!ConfigurationUSX.PartialUSX)
             {
-                bodyContent.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
-                bodyContent.AppendLine("</usx>");
+                output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
+                output.AppendLine("</usx>");
             }
 
             return output.ToString();
