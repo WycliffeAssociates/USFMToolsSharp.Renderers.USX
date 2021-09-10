@@ -2,31 +2,16 @@ namespace USFMToolsSharp.Renderers.USX
 {
     public class USXConfig
     {
-        public bool separateChapters;
-        public bool separateVerses;
-        public bool blankColumn;
-        public bool partialUSX;
-        public bool renderTableOfContents;
+        public bool PartialUSX;
 
         public USXConfig()
         {
-            separateChapters = false;
-            separateVerses = false;
-            blankColumn = false;
-            partialUSX = false;
-            renderTableOfContents = false;
+            PartialUSX = false;
         }
 
-        public USXConfig(
-            bool separateChapters, bool separateVerses, 
-            bool blankColumn, bool partialUSX,
-            bool renderTableOfContents)
+        public USXConfig(bool partialUSX)
         {
-            this.separateChapters = separateChapters;
-            this.separateVerses = separateVerses;
-            this.blankColumn = blankColumn;
-            this.partialUSX = partialUSX;
-            this.renderTableOfContents = renderTableOfContents;
+            PartialUSX = partialUSX;
         }
     }
 }
