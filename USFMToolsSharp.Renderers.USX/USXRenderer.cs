@@ -31,7 +31,7 @@ namespace USFMToolsSharp.Renderers.USX
 
             if (!ConfigurationUSX.PartialUSX)
             {
-                output.AppendLine($"<?xml version=\"1.0\" encoding=\"{encoding}\">");
+                output.AppendLine($"<?xml version=\"1.0\" encoding=\"{encoding}\"?>");
                 output.AppendLine("<usx version=\"3.0\">");
             }
 
@@ -160,5 +160,18 @@ namespace USFMToolsSharp.Renderers.USX
 
             return output.ToString();
         }
+        
+        // Debugging purposes
+        public static void Main()
+        {
+            var parser = new USFMParser();
+            var renderer = new USXRenderer();
+            
+            var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/67-REV.usfm");
+            var parsed = parser.ParseFromString(text);
+            var rendered = renderer.Render(parsed);
+
+            Console.WriteLine(rendered);
+        }   
     }
 }
