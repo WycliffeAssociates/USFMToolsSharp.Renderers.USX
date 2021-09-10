@@ -10,13 +10,11 @@ namespace USFMToolsSharp.Renderers.USX
     {
         public List<string> UnrenderableTags;
         public USXConfig ConfigurationUSX;
-        private IList<string> TOCEntries;
         
         public USXRenderer()
         {
             UnrenderableTags = new List<string>();
             ConfigurationUSX = new USXConfig();
-            TOCEntries = new List<string>();
         }
 
         public USXRenderer(USXConfig config) : this()
@@ -27,32 +25,23 @@ namespace USFMToolsSharp.Renderers.USX
         {
             var encoding = GetEncoding(input);
             var output = new StringBuilder();
-            var bodyContent = new StringBuilder();
 
-            if (!ConfigurationUSX.partialUSX)
+            if (!ConfigurationUSX.PartialUSX)
             {
-                bodyContent.AppendLine($"<?xml version=\"1.0\" encoding=\"{encoding}\">");
-                bodyContent.AppendLine("<usx version=\"3.0\">");
+                output.AppendLine($"<?xml version=\"1.0\" encoding=\"{encoding}\">");
+                output.AppendLine("<usx version=\"3.0\">");
             }
 
             foreach (Marker marker in input.Contents)
             {
-                bodyContent.Append(RenderMarker(marker));
+                output.Append(RenderMarker(marker));
             }
 
-            if (!ConfigurationUSX.partialUSX)
+            if (!ConfigurationUSX.PartialUSX)
             {
-                bodyContent.AppendLine("</usx>");
-            }
-            
-            // Insert TOC
-            if (ConfigurationUSX.renderTableOfContents && TOCEntries.Count > 0)
-            {
-                output.AppendLine(RenderTOC());
+                output.AppendLine("</usx>");
             }
 
-            output.Append(bodyContent);
-            
             return output.ToString();
         }
 
@@ -79,13 +68,6 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
             }
             
-            return output.ToString();
-        }
-
-        private string RenderTOC()
-        {
-            var output = new StringBuilder();
-
             return output.ToString();
         }
     }
