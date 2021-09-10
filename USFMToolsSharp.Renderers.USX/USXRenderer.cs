@@ -42,7 +42,6 @@ namespace USFMToolsSharp.Renderers.USX
 
             if (!ConfigurationUSX.PartialUSX)
             {
-                output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
                 output.AppendLine("</usx>");
             }
 
@@ -121,13 +120,6 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case CMarker cMarker:
-
-                    // If the next chapter is found, mark the end of the current chapter
-                    if (CurrentChapter < cMarker.Number)
-                    {
-                        output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
-                    }
-                    
                     CurrentChapter = cMarker.Number;
                     output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
                                       $"number=\"{cMarker.Number}\" " +
@@ -136,6 +128,7 @@ namespace USFMToolsSharp.Renderers.USX
                     {
                         output.Append(RenderMarker(marker));
                     }
+                    output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
                     break;
                 
                 case VMarker vMarker:
@@ -164,12 +157,21 @@ namespace USFMToolsSharp.Renderers.USX
         // Debugging purposes
         public static void Main()
         {
-            var parser = new USFMParser();
+            List<string> UnrenderableTags = new List<string>();
+            
+            UnrenderableTags.Add("s5");
+            
+            var parser = new USFMParser(UnrenderableTags);
             var renderer = new USXRenderer();
             
             var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/67-REV.usfm");
             var parsed = parser.ParseFromString(text);
             var rendered = renderer.Render(parsed);
+
+            // foreach (var marker in parsed.Contents)
+            // {
+            //     Console.WriteLine(marker);
+            // }
 
             Console.WriteLine(rendered);
         }   
