@@ -10,11 +10,14 @@ namespace USFMToolsSharp.Renderers.USX
     {
         public List<string> UnrenderableTags;
         public USXConfig ConfigurationUSX;
+        private string CurrentBookCode;
+        private int CurrentChapter;
         
         public USXRenderer()
         {
             UnrenderableTags = new List<string>();
             ConfigurationUSX = new USXConfig();
+            CurrentChapter = 1;
         }
 
         public USXRenderer(USXConfig config) : this()
@@ -39,7 +42,8 @@ namespace USFMToolsSharp.Renderers.USX
 
             if (!ConfigurationUSX.PartialUSX)
             {
-                output.AppendLine("</usx>");
+                bodyContent.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
+                bodyContent.AppendLine("</usx>");
             }
 
             return output.ToString();
@@ -65,6 +69,8 @@ namespace USFMToolsSharp.Renderers.USX
                 case IDMarker idMarker:
                     var bookCode = idMarker.TextIdentifier.Substring(0, 3);
                     var bibleVersion = idMarker.TextIdentifier.Substring(4);
+
+                    CurrentBookCode = bookCode;
                     
                     output.Append($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">");
                     output.Append(bibleVersion);
@@ -115,17 +121,32 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case CMarker cMarker:
+
+                    // If the next chapter is found, mark the end of the current chapter
+                    if (CurrentChapter < cMarker.Number)
+                    {
+                        output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
+                    }
+                    
+                    CurrentChapter = cMarker.Number;
+                    output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
+                                      $"number=\"{cMarker.Number}\" " +
+                                      $"sid=\"{CurrentBookCode} {cMarker.Number}\" />");
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
                     break;
                 
                 case VMarker vMarker:
                     output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
                                       $"number=\"{vMarker.VerseNumber}\" " +
-                                      $"sid=\":{vMarker.VerseNumber}\" />");
+                                      $"sid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
-                    output.AppendLine("<verse/>");
+                    output.AppendLine($"<verse eid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
                     break;
                 
                 case TextBlock textBlock:
