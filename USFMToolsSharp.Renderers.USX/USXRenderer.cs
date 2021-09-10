@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using USFMToolsSharp.Models.Markers;
 
 namespace USFMToolsSharp.Renderers.USX
@@ -12,12 +14,14 @@ namespace USFMToolsSharp.Renderers.USX
         public USXConfig ConfigurationUSX;
         private string CurrentBookCode;
         private int CurrentChapter;
+        private string CurrentVerse;
         
         public USXRenderer()
         {
             UnrenderableTags = new List<string>();
             ConfigurationUSX = new USXConfig();
             CurrentChapter = 1;
+            CurrentVerse = "1";
         }
 
         public USXRenderer(USXConfig config) : this()
@@ -32,7 +36,7 @@ namespace USFMToolsSharp.Renderers.USX
             if (!ConfigurationUSX.PartialUSX)
             {
                 output.AppendLine($"<?xml version=\"1.0\" encoding=\"{encoding}\"?>");
-                output.AppendLine("<usx version=\"3.0\">");
+                output.AppendLine($"<usx version=\"{ConfigurationUSX.USXVersion}\">");
             }
 
             foreach (Marker marker in input.Contents)
@@ -108,8 +112,21 @@ namespace USFMToolsSharp.Renderers.USX
                     output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">{sMarker.Text}</para>");
                     break;
                 
+                // HAVEN'T IMPLEMENTED VID IDENTIFIER
                 case PMarker pMarker:
-                    output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
+
+                    // USX 3.0
+                    // VID IDENTIFIER IMPLEMENTATION GOES HERE
+                    if (ConfigurationUSX.USXVersion.Equals(3.0))
+                    {
+                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
+                    }
+
+                    // USX 2.5
+                    else
+                    {
+                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
+                    }
 
                     foreach (Marker marker in input.Contents)
                     {
@@ -121,25 +138,70 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case CMarker cMarker:
                     CurrentChapter = cMarker.Number;
-                    output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
-                                      $"number=\"{cMarker.Number}\" " +
-                                      $"sid=\"{CurrentBookCode} {cMarker.Number}\" />");
-                    foreach (Marker marker in input.Contents)
+
+                    // USX 3.0
+                    if (ConfigurationUSX.USXVersion.Equals(3.0))
                     {
-                        output.Append(RenderMarker(marker));
+                        output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
+                                          $"number=\"{cMarker.Number}\" " +
+                                          $"sid=\"{CurrentBookCode} {cMarker.Number}\" />");
+                        foreach (Marker marker in input.Contents)
+                        {
+                            output.Append(RenderMarker(marker));
+                        }
+                        output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
                     }
-                    output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
+                    
+                    // USX 2.5
+                    else
+                    {
+                        output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
+                                          $"number=\"{cMarker.Number}\" />");
+                        foreach (Marker marker in input.Contents)
+                        {
+                            output.Append(RenderMarker(marker));
+                        }
+                    }
+                    break;
+                 
+                case VMarker vMarker:
+                    CurrentVerse = vMarker.VerseNumber;
+
+                    // USX 3.0
+                    if (ConfigurationUSX.USXVersion.Equals(3.0))
+                    {
+                        output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
+                                          $"number=\"{vMarker.VerseNumber}\" " +
+                                          $"sid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
+                        foreach (Marker marker in input.Contents)
+                        {
+                            output.Append(RenderMarker(marker));
+                        }
+                        output.AppendLine($"<verse eid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
+                    }
+
+                    // USX 2.5
+                    else
+                    {
+                        output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
+                                          $"number=\"{vMarker.VerseNumber}\" />");
+                        foreach (Marker marker in input.Contents)
+                        {
+                            output.Append(RenderMarker(marker));
+                        }
+                    }
                     break;
                 
-                case VMarker vMarker:
-                    output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
-                                      $"number=\"{vMarker.VerseNumber}\" " +
-                                      $"sid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
+                // HAVEN'T IMPLEMENTED VID IDENTIFIER                
+                case QMarker qMarker:
+                    output.AppendLine($"<para style=\"{qMarker.Identifier}\">");
+                    
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
-                    output.AppendLine($"<verse eid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
+
+                    output.AppendLine("</para>");
                     break;
                 
                 case TextBlock textBlock:
@@ -150,6 +212,8 @@ namespace USFMToolsSharp.Renderers.USX
                     UnrenderableTags.Add(input.Identifier);
                     break;
             }
+            
+            
 
             return output.ToString();
         }
@@ -163,8 +227,11 @@ namespace USFMToolsSharp.Renderers.USX
             
             var parser = new USFMParser(UnrenderableTags);
             var renderer = new USXRenderer();
-            
-            var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/67-REV.usfm");
+
+            // var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/31-OBA.usfm");
+            // var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/67-REV.usfm");
+            var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/42-MRK.usfm");
+
             var parsed = parser.ParseFromString(text);
             var rendered = renderer.Render(parsed);
 
@@ -173,7 +240,15 @@ namespace USFMToolsSharp.Renderers.USX
             //     Console.WriteLine(marker);
             // }
 
-            Console.WriteLine(rendered);
+            // Console.WriteLine(rendered);
+
+            XmlDocument xmlDoc = new XmlDocument();
+            StringWriter sw = new StringWriter();
+            xmlDoc.LoadXml(rendered);
+            xmlDoc.Save(sw);
+            var formatted_rendered = sw.ToString();
+
+            Console.WriteLine(formatted_rendered);
         }   
     }
 }
