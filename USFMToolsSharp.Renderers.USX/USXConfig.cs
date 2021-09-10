@@ -11,9 +11,10 @@ namespace USFMToolsSharp.Renderers.USX
             USXVersion = "3.0";
         }
 
-        public USXConfig(bool partialUSX)
+        public USXConfig(bool partialUSX, string USXVersion)
         {
             PartialUSX = partialUSX;
+            this.USXVersion = USXVersion;
         }
     }
 }
