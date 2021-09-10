@@ -69,7 +69,30 @@ namespace USFMToolsSharp.Renderers.USX
 
             switch (input)
             {
+                case BMarker bMarker:
+                    output.AppendLine($"<para style=\"{bMarker.Identifier}\"></para>");
+                    break;
+                
                 case BDMarker bdMarker:
+                    output.AppendLine($"<char style=\"{bdMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
+                    break;
+                
+                case BDITMarker bditMarker:
+                    output.AppendLine($"<char style=\"{bditMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
                     break;
                 
                 case CMarker cMarker:
@@ -126,29 +149,29 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case FQAMarker fqaMarker:
-                                    output.Append($"<char style=\"{fqaMarker.Identifier}\">");
-                
-                                    foreach (Marker marker in input.Contents)
-                                    {
-                                        output.Append(RenderMarker(marker));
-                                    }
-                                    
-                                    output.AppendLine("</char>");
-                                    break;
+                    output.AppendLine($"<char style=\"{fqaMarker.Identifier}\">");
+
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
+                    break;
                 
                 case FQMarker fqMarker:
-                                    output.Append($"<char style=\"{fqMarker.Identifier}\">");
-                
-                                    foreach (Marker marker in input.Contents)
-                                    {
-                                        output.Append(RenderMarker(marker));
-                                    }
-                                    
-                                    output.AppendLine("</char>");
-                                    break;
+                    output.AppendLine($"<char style=\"{fqMarker.Identifier}\">");
+
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
+                    break;
                 
                 case FTMarker ftMarker:
-                    output.Append($"<char style=\"{ftMarker.Identifier}\">");
+                    output.AppendLine($"<char style=\"{ftMarker.Identifier}\">");
                     
                     foreach (Marker marker in input.Contents)
                     {
@@ -159,82 +182,138 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case HMarker hMarker:
-                                    output.AppendLine($"<para style=\"{hMarker.Identifier}\">{hMarker.HeaderText}</para>");
-                                    break;
+                    output.AppendLine($"<para style=\"{hMarker.Identifier}\">{hMarker.HeaderText}</para>");
+                    break;
                 
                 case IDEMarker ideMarker:
-                                    output.AppendLine($"<para style=\"{ideMarker.Identifier}\">{ideMarker.Encoding}</para>");
-                                    break;
+                    output.AppendLine($"<para style=\"{ideMarker.Identifier}\">{ideMarker.Encoding}</para>");
+                    break;
                 
                 case IDMarker idMarker:
-                                    var bookCode = idMarker.TextIdentifier.Substring(0, 3);
-                                    var bibleVersion = idMarker.TextIdentifier.Substring(4);
+                    var bookCode = idMarker.TextIdentifier.Substring(0, 3);
+                    var bibleVersion = idMarker.TextIdentifier.Substring(4);
+
+                    CurrentBookCode = bookCode;
+                    
+                    output.Append($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">");
+                    output.Append(bibleVersion);
+                    output.AppendLine("</book>");
+                    break;
                 
-                                    CurrentBookCode = bookCode;
-                                    
-                                    output.Append($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">");
-                                    output.Append(bibleVersion);
-                                    output.AppendLine("</book>");
-                                    break;
+                case ITMarker itMarker:
+                    output.AppendLine($"<char style=\"{itMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
+                    break;
+                
+                case LIMarker liMarker:
+                    output.AppendLine($"<para style=\"{liMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</para>");
+                    break;
+                
+                case MSMarker msMarker:
+                    output.AppendLine($"<para style=\"{msMarker.Identifier}\">{msMarker.Heading}</para>");
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    break;
 
                 case MTMarker mtMarker:
-                                    output.AppendLine($"<para style=\"{mtMarker.Identifier}\">{mtMarker.Title}</para>");
-                                    break;
+                    output.AppendLine($"<para style=\"{mtMarker.Identifier}\">{mtMarker.Title}</para>");
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    break;
 
                 case PMarker pMarker:
                 
-                                    // USX 3.0
-                                    // NEEDS IMPLEMENTATION
-                                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
-                                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                                    {
-                                        throw new Exception("USX 3.0 Not Implemented.");
-                                    }
+                    // USX 3.0
+                    // NEEDS IMPLEMENTATION
+                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                    {
+                        throw new Exception("USX 3.0 Not Implemented.");
+                    }
+
+                    // USX 2.5
+                    else
+                    {
+                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
+                    }
+
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+
+                    output.AppendLine("</para>");
+                    break;
                 
-                                    // USX 2.5
-                                    else
-                                    {
-                                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
-                                    }
-                
-                                    foreach (Marker marker in input.Contents)
-                                    {
-                                        output.Append(RenderMarker(marker));
-                                    }
-                
-                                    output.AppendLine("</para>");
-                                    break;
+                case PIMarker piMarker:
+                    output.AppendLine($"<para style=\"{piMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</para>");
+                    break;
                 
                 case QMarker qMarker:
-                                    // USX 3.0
-                                    // NEEDS IMPLEMENTATION
-                                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
-                                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                                    {
-                                        throw new Exception("USX 3.0 Not Implemented.");
-                                    }
+                    // USX 3.0
+                    // NEEDS IMPLEMENTATION
+                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                    {
+                        throw new Exception("USX 3.0 Not Implemented.");
+                    }
+
+                    // USX 2.5
+                    else
+                    {
+                        output.AppendLine($"<para style=\"{qMarker.Identifier}\">");
+                    }
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+
+                    output.AppendLine("</para>");
+                    break;
                 
-                                    // USX 2.5
-                                    else
-                                    {
-                                        output.AppendLine($"<para style=\"{qMarker.Identifier}\">");
-                                    }
-                                    
-                                    foreach (Marker marker in input.Contents)
-                                    {
-                                        output.Append(RenderMarker(marker));
-                                    }
-                
-                                    output.AppendLine("</para>");
-                                    break;
+                case QMMarker qmMarker:
+                    output.AppendLine($"<para style=\"{qmMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</para>");
+                    break;
 
                 case SMarker sMarker:
-                                    output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">{sMarker.Text}</para>");
-                                    break;
+                    output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">{sMarker.Text}</para>");
+                    break;
                 
                 case TextBlock textBlock:
-                                    output.AppendLine(textBlock.Text.Trim());
-                                    break;
+                    output.AppendLine(textBlock.Text.Trim());
+                    break;
                 
                 case TOC1Marker toc1Marker:
                     output.AppendLine($"<para style=\"{toc1Marker.Identifier}\">{toc1Marker.LongTableOfContentsText}</para>");
@@ -249,8 +328,8 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case USFMMarker usfmMarker:
-                                    output.AppendLine($"<para style=\"{usfmMarker.Identifier}\">{usfmMarker.Version}</para>");
-                                    break;
+                    output.AppendLine($"<para style=\"{usfmMarker.Identifier}\">{usfmMarker.Version}</para>");
+                    break;
                 
                 case VMarker vMarker:
                     CurrentVerse = vMarker.VerseNumber;
@@ -298,9 +377,9 @@ namespace USFMToolsSharp.Renderers.USX
             var parser = new USFMParser(UnrenderableTags);
             var renderer = new USXRenderer();
 
-            // var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/31-OBA.usfm");
+            var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/31-OBA.usfm");
             // var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/67-REV.usfm");
-            var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/42-MRK.usfm");
+            // var text = System.IO.File.ReadAllText("../../../../../USFM_Files/en_ulb/42-MRK.usfm");
 
             var parsed = parser.ParseFromString(text);
             var rendered = renderer.Render(parsed);
@@ -310,7 +389,7 @@ namespace USFMToolsSharp.Renderers.USX
             //     Console.WriteLine(marker);
             // }
 
-            // Console.WriteLine(rendered);
+            Console.WriteLine(rendered);
 
             XmlDocument xmlDoc = new XmlDocument();
             StringWriter sw = new StringWriter();
@@ -318,7 +397,7 @@ namespace USFMToolsSharp.Renderers.USX
             xmlDoc.Save(sw);
             var formatted_rendered = sw.ToString();
 
-            Console.WriteLine(formatted_rendered);
+            // Console.WriteLine(formatted_rendered);
         }   
     }
 }
