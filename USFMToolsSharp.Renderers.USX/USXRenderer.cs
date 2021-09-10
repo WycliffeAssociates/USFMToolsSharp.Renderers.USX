@@ -69,78 +69,14 @@ namespace USFMToolsSharp.Renderers.USX
 
             switch (input)
             {
-                case IDMarker idMarker:
-                    var bookCode = idMarker.TextIdentifier.Substring(0, 3);
-                    var bibleVersion = idMarker.TextIdentifier.Substring(4);
-
-                    CurrentBookCode = bookCode;
-                    
-                    output.Append($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">");
-                    output.Append(bibleVersion);
-                    output.AppendLine("</book>");
-                    break;
-                
-                case USFMMarker usfmMarker:
-                    output.AppendLine($"<para style=\"{usfmMarker.Identifier}\">{usfmMarker.Version}</para>");
-                    break;
-                
-                case IDEMarker ideMarker:
-                    output.AppendLine($"<para style=\"{ideMarker.Identifier}\">{ideMarker.Encoding}</para>");
-                    break;
-                    
-                case HMarker hMarker:
-                    output.AppendLine($"<para style=\"{hMarker.Identifier}\">{hMarker.HeaderText}</para>");
-                    break;
-                
-                case TOC1Marker toc1Marker:
-                    output.AppendLine($"<para style=\"{toc1Marker.Identifier}\">{toc1Marker.LongTableOfContentsText}</para>");
-                    break;
-
-                case TOC2Marker toc2Marker:
-                    output.AppendLine($"<para style=\"{toc2Marker.Identifier}\">{toc2Marker.ShortTableOfContentsText}</para>");
-                    break;
-                
-                case TOC3Marker toc3Marker:
-                    output.AppendLine($"<para style=\"{toc3Marker.Identifier}\">{toc3Marker.BookAbbreviation}</para>");
-                    break;
-                
-                case MTMarker mtMarker:
-                    output.AppendLine($"<para style=\"{mtMarker.Identifier}\">{mtMarker.Title}</para>");
-                    break;
-                
-                case SMarker sMarker:
-                    output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">{sMarker.Text}</para>");
-                    break;
-                
-                // HAVEN'T IMPLEMENTED VID IDENTIFIER
-                case PMarker pMarker:
-
-                    // USX 3.0
-                    // VID IDENTIFIER IMPLEMENTATION GOES HERE
-                    if (ConfigurationUSX.USXVersion.Equals(3.0))
-                    {
-                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
-                    }
-
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
-                    }
-
-                    foreach (Marker marker in input.Contents)
-                    {
-                        output.Append(RenderMarker(marker));
-                    }
-
-                    output.AppendLine("</para>");
+                case BDMarker bdMarker:
                     break;
                 
                 case CMarker cMarker:
                     CurrentChapter = cMarker.Number;
 
                     // USX 3.0
-                    if (ConfigurationUSX.USXVersion.Equals(3.0))
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
                     {
                         output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
                                           $"number=\"{cMarker.Number}\" " +
@@ -163,12 +99,164 @@ namespace USFMToolsSharp.Renderers.USX
                         }
                     }
                     break;
-                 
+                
+                case FMarker fMarker:
+
+                    // USX 3.0
+                    // NEEDS IMPLEMENTATION
+                    // Optional "Category" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/notes.html#footnote-note
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                    {
+                        throw new Exception("USX 3.0 Not Implemented.");
+                    }
+
+                    // 2.5
+                    else
+                    {
+                        output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
+                                          $"caller=\"{fMarker.FootNoteCaller}\">");
+                    }
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+
+                    output.AppendLine("</note>");
+                    break;
+                
+                case FQAMarker fqaMarker:
+                                    output.Append($"<char style=\"{fqaMarker.Identifier}\">");
+                
+                                    foreach (Marker marker in input.Contents)
+                                    {
+                                        output.Append(RenderMarker(marker));
+                                    }
+                                    
+                                    output.AppendLine("</char>");
+                                    break;
+                
+                case FQMarker fqMarker:
+                                    output.Append($"<char style=\"{fqMarker.Identifier}\">");
+                
+                                    foreach (Marker marker in input.Contents)
+                                    {
+                                        output.Append(RenderMarker(marker));
+                                    }
+                                    
+                                    output.AppendLine("</char>");
+                                    break;
+                
+                case FTMarker ftMarker:
+                    output.Append($"<char style=\"{ftMarker.Identifier}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</char>");
+                    break;
+                
+                case HMarker hMarker:
+                                    output.AppendLine($"<para style=\"{hMarker.Identifier}\">{hMarker.HeaderText}</para>");
+                                    break;
+                
+                case IDEMarker ideMarker:
+                                    output.AppendLine($"<para style=\"{ideMarker.Identifier}\">{ideMarker.Encoding}</para>");
+                                    break;
+                
+                case IDMarker idMarker:
+                                    var bookCode = idMarker.TextIdentifier.Substring(0, 3);
+                                    var bibleVersion = idMarker.TextIdentifier.Substring(4);
+                
+                                    CurrentBookCode = bookCode;
+                                    
+                                    output.Append($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">");
+                                    output.Append(bibleVersion);
+                                    output.AppendLine("</book>");
+                                    break;
+
+                case MTMarker mtMarker:
+                                    output.AppendLine($"<para style=\"{mtMarker.Identifier}\">{mtMarker.Title}</para>");
+                                    break;
+
+                case PMarker pMarker:
+                
+                                    // USX 3.0
+                                    // NEEDS IMPLEMENTATION
+                                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
+                                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                                    {
+                                        throw new Exception("USX 3.0 Not Implemented.");
+                                    }
+                
+                                    // USX 2.5
+                                    else
+                                    {
+                                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
+                                    }
+                
+                                    foreach (Marker marker in input.Contents)
+                                    {
+                                        output.Append(RenderMarker(marker));
+                                    }
+                
+                                    output.AppendLine("</para>");
+                                    break;
+                
+                case QMarker qMarker:
+                                    // USX 3.0
+                                    // NEEDS IMPLEMENTATION
+                                    // Optional "vid" identifier can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
+                                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                                    {
+                                        throw new Exception("USX 3.0 Not Implemented.");
+                                    }
+                
+                                    // USX 2.5
+                                    else
+                                    {
+                                        output.AppendLine($"<para style=\"{qMarker.Identifier}\">");
+                                    }
+                                    
+                                    foreach (Marker marker in input.Contents)
+                                    {
+                                        output.Append(RenderMarker(marker));
+                                    }
+                
+                                    output.AppendLine("</para>");
+                                    break;
+
+                case SMarker sMarker:
+                                    output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">{sMarker.Text}</para>");
+                                    break;
+                
+                case TextBlock textBlock:
+                                    output.AppendLine(textBlock.Text.Trim());
+                                    break;
+                
+                case TOC1Marker toc1Marker:
+                    output.AppendLine($"<para style=\"{toc1Marker.Identifier}\">{toc1Marker.LongTableOfContentsText}</para>");
+                    break;
+
+                case TOC2Marker toc2Marker:
+                    output.AppendLine($"<para style=\"{toc2Marker.Identifier}\">{toc2Marker.ShortTableOfContentsText}</para>");
+                    break;
+                
+                case TOC3Marker toc3Marker:
+                    output.AppendLine($"<para style=\"{toc3Marker.Identifier}\">{toc3Marker.BookAbbreviation}</para>");
+                    break;
+                
+                case USFMMarker usfmMarker:
+                                    output.AppendLine($"<para style=\"{usfmMarker.Identifier}\">{usfmMarker.Version}</para>");
+                                    break;
+                
                 case VMarker vMarker:
                     CurrentVerse = vMarker.VerseNumber;
 
                     // USX 3.0
-                    if (ConfigurationUSX.USXVersion.Equals(3.0))
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
                     {
                         output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
                                           $"number=\"{vMarker.VerseNumber}\" " +
@@ -192,29 +280,11 @@ namespace USFMToolsSharp.Renderers.USX
                     }
                     break;
                 
-                // HAVEN'T IMPLEMENTED VID IDENTIFIER                
-                case QMarker qMarker:
-                    output.AppendLine($"<para style=\"{qMarker.Identifier}\">");
-                    
-                    foreach (Marker marker in input.Contents)
-                    {
-                        output.Append(RenderMarker(marker));
-                    }
-
-                    output.AppendLine("</para>");
-                    break;
-                
-                case TextBlock textBlock:
-                    output.AppendLine(textBlock.Text.Trim());
-                    break;
-
                 default:
                     UnrenderableTags.Add(input.Identifier);
                     break;
             }
             
-            
-
             return output.ToString();
         }
         
