@@ -110,7 +110,7 @@ namespace USFMToolsSharp.Renderers.USX
                     }
                     
                     // USX 2.5
-                    else
+                    else if (ConfigurationUSX.USXVersion.Equals("2.5"))
                     {
                         output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
                                           $"number=\"{cMarker.Number}\" />");
@@ -118,6 +118,11 @@ namespace USFMToolsSharp.Renderers.USX
                         {
                             output.Append(RenderMarker(marker));
                         }
+                    }
+
+                    else
+                    {
+                        throw new UnsupportedVersionException($"Unsupported USX version: {ConfigurationUSX.USXVersion}");
                     }
                     break;
                 
@@ -143,20 +148,10 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case FMarker fMarker:
-                    // USX 3.0
-                    // Optional "Category" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/notes.html#footnote-note
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
-                                          $"caller=\"{fMarker.FootNoteCaller}\">");
-                    }
+                    // For USX 3.0, optional "Category" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/notes.html#footnote-note
 
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
-                                          $"caller=\"{fMarker.FootNoteCaller}\">");
-                    }
+                    output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
+                                      $"caller=\"{fMarker.FootNoteCaller}\">");
                     
                     foreach (Marker marker in input.Contents)
                     {
@@ -293,18 +288,9 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case PMarker pMarker:
-                    // USX 3.0
-                    // Optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
-                    }
+                    // For USX 3.0, optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
 
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
-                    }
+                    output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
 
                     foreach (Marker marker in input.Contents)
                     {
@@ -326,18 +312,9 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case QMarker qMarker:
-                    // USX 3.0
-                    // Optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<para style=\"{qMarker.Identifier}{qMarker.Depth}\">");
-                    }
+                    // For USX 3.0, optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#para
 
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<para style=\"{qMarker.Identifier}{qMarker.Depth}\">");
-                    }
+                    output.AppendLine($"<para style=\"{qMarker.Identifier}{qMarker.Depth}\">");
                     
                     foreach (Marker marker in input.Contents)
                     {
@@ -413,18 +390,9 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case TableBlock _:
-                    // USX 3.0
-                    // Optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#table
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine("<Table>");
-                    }
-                    
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine("<Table>");
-                    }
+                    // For USX 3.0, optional "vid" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#table
+
+                    output.AppendLine("<Table>");
 
                     foreach (Marker marker in input.Contents)
                     {
@@ -435,20 +403,10 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case TCMarker tcMarker:
-                    // USX 3.0
-                    // Optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<cell style=\"{tcMarker.Identifier}{tcMarker.ColumnPosition}\" " +
-                                          $"align=\"start\">");
-                    }
+                    // For USX 3.0, optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
                     
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<cell style=\"{tcMarker.Identifier}{tcMarker.ColumnPosition}\" " +
-                                          $"align=\"start\">");
-                    }
+                    output.AppendLine($"<cell style=\"{tcMarker.Identifier}{tcMarker.ColumnPosition}\" " +
+                                        $"align=\"start\">");
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
@@ -458,20 +416,10 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case TCRMarker tcrMarker:
-                    // USX 3.0
-                    // Optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<cell style=\"{tcrMarker.Identifier}{tcrMarker.ColumnPosition}\" " +
-                                          $"align=\"end\">");
-                    }
+                    // For USX 3.0, optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
                     
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<cell style=\"{tcrMarker.Identifier}{tcrMarker.ColumnPosition}\" " +
-                                          $"align=\"end\">");
-                    }
+                    output.AppendLine($"<cell style=\"{tcrMarker.Identifier}{tcrMarker.ColumnPosition}\" " +
+                                        $"align=\"end\">");
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
@@ -485,20 +433,10 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case THMarker thMarker:
-                    // USX 3.0
-                    // Optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<cell style=\"{thMarker.Identifier}{thMarker.ColumnPosition}\" " +
-                                          $"align=\"start\">");
-                    }
+                    // For USX 3.0, optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
                     
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<cell style=\"{thMarker.Identifier}{thMarker.ColumnPosition}\" " +
-                                          $"align=\"start\">");
-                    }
+                    output.AppendLine($"<cell style=\"{thMarker.Identifier}{thMarker.ColumnPosition}\" " +
+                                      $"align=\"start\">");
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
@@ -508,20 +446,10 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case THRMarker thrMarker:
-                    // USX 3.0
-                    // Optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
-                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
-                    {
-                        output.AppendLine($"<cell style=\"{thrMarker.Identifier}{thrMarker.ColumnPosition}\" " +
-                                          $"align=\"end\">");
-                    }
+                    // For USX 3.0, optional "colspan" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/elements.html#cell
                     
-                    // USX 2.5
-                    else
-                    {
-                        output.AppendLine($"<cell style=\"{thrMarker.Identifier}{thrMarker.ColumnPosition}\" " +
-                                          $"align=\"end\">");
-                    }
+                    output.AppendLine($"<cell style=\"{thrMarker.Identifier}{thrMarker.ColumnPosition}\" " +
+                                      $"align=\"end\">");
                     foreach (Marker marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
@@ -583,7 +511,7 @@ namespace USFMToolsSharp.Renderers.USX
                     }
 
                     // USX 2.5
-                    else
+                    else if (ConfigurationUSX.USXVersion.Equals("2.5"))
                     {
                         output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
                                           $"number=\"{vMarker.VerseNumber}\" />");
@@ -591,6 +519,11 @@ namespace USFMToolsSharp.Renderers.USX
                         {
                             output.Append(RenderMarker(marker));
                         }
+                    }
+
+                    else
+                    {
+                        throw new UnsupportedVersionException($"Unsupported USX version: {ConfigurationUSX.USXVersion}");
                     }
                     break;
                 
