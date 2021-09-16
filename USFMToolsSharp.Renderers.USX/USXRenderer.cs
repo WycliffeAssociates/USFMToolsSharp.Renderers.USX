@@ -14,6 +14,7 @@ namespace USFMToolsSharp.Renderers.USX
         private readonly USXConfig ConfigurationUSX;
         private string CurrentBookCode;
         private int CurrentChapter;
+
         
         public USXRenderer()
         {
@@ -24,7 +25,9 @@ namespace USFMToolsSharp.Renderers.USX
 
         public USXRenderer(USXConfig config) : this()
         {
+            UnrenderableTags = new List<string>();
             ConfigurationUSX = config;
+            CurrentChapter = 1;
         }
         public string Render(USFMDocument input)
         {
@@ -64,6 +67,7 @@ namespace USFMToolsSharp.Renderers.USX
         private string RenderMarker(Marker input)
         {
             var output = new StringBuilder();
+            var footnote = new StringBuilder();
 
             switch (input)
             {
@@ -149,60 +153,36 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case FMarker fMarker:
                     // For USX 3.0, optional "Category" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/notes.html#footnote-note
-
-                    output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
-                                      $"caller=\"{fMarker.FootNoteCaller}\">");
                     
-                    foreach (Marker marker in input.Contents)
-                    {
-                        output.Append(RenderMarker(marker));
-                    }
-
-                    output.AppendLine("</note>");
+                    // output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
+                    //                   $"caller=\"{fMarker.FootNoteCaller}\">");
+                    //
+                    // foreach (Marker marker in input.Contents)
+                    // {
+                    //     output.Append(RenderMarker(marker));
+                    // }
+                    //
+                    // output.AppendLine("</note>");
                     break;
                 
-                // Needs implementation
+                case FKMarker fkMarker:
+                    output.AppendLine($"<char style=\"{fkMarker.Identifier}\">{fkMarker.FootNoteKeyword}</char>");
+                    break;
+                
                 case FPMarker fpMarker:
-                    // output.AppendLine($"<char style=\"{fpMarker.Identifier}\">");
-                    //
-                    // foreach (Marker marker in input.Contents)
-                    // {
-                    //     output.Append(RenderMarker(marker));
-                    // }
-                    // output.AppendLine("</char>");
                     break;
                 
-                // Needs implementation
-                case FQAMarker fqaMarker:
-                    // output.AppendLine($"<char style=\"{fqaMarker.Identifier}\">");
-                    //
-                    // foreach (Marker marker in input.Contents)
-                    // {
-                    //     output.Append(RenderMarker(marker));
-                    // }
-                    // output.AppendLine("</char>");
-                    break;
-                
-                // Needs implementation
                 case FQMarker fqMarker:
-                    // output.AppendLine($"<char style=\"{fqMarker.Identifier}\">");
-                    //
-                    // foreach (Marker marker in input.Contents)
-                    // {
-                    //     output.Append(RenderMarker(marker));
-                    // }
-                    // output.AppendLine("</char>");
                     break;
                 
-                // Needs implementation
+                case FQAMarker fqaMarker:
+                    break;
+                
+                case FRMarker frMarker:
+                    output.AppendLine($"<char style=\"{frMarker.Identifier}\">{frMarker.VerseReference}</char>");
+                    break;
+                
                 case FTMarker ftMarker:
-                    // output.AppendLine($"<char style=\"{ftMarker.Identifier}\">");
-                    //
-                    // foreach (Marker marker in input.Contents)
-                    // {
-                    //     output.Append(RenderMarker(marker));
-                    // }
-                    // output.AppendLine("</char>");
                     break;
                 
                 case HMarker hMarker:
@@ -429,7 +409,7 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case TextBlock textBlock:
-                    output.AppendLine(textBlock.Text.Trim());
+                    output.Append(textBlock.Text);
                     break;
                 
                 case THMarker thMarker:
@@ -528,32 +508,23 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case XMarker xMarker:
-                    output.AppendLine($"<note style=\"{xMarker.Identifier}\" " +
-                                      $"caller=\"{xMarker.CrossRefCaller}\">");
-                    
-                    foreach (Marker marker in input.Contents)
-                    {
-                        output.Append(RenderMarker(marker));
-                    }
-
-                    output.AppendLine("</note>");
-                    break;
-                
-                case XOMarker xoMarker:
-                    output.AppendLine($"<char style=\"{xoMarker.Identifier}\">{xoMarker.OriginRef}</char>");
-                    break;
-                
-                // Needs implementation
-                case XTMarker xtMarker:
-                    // output.AppendLine($"<char style=\"{xtMarker.Identifier}\">");
+                    // output.AppendLine($"<note style=\"{xMarker.Identifier}\" " +
+                    //                   $"caller=\"{xMarker.CrossRefCaller}\">");
                     //
                     // foreach (Marker marker in input.Contents)
                     // {
                     //     output.Append(RenderMarker(marker));
                     // }
                     //
-                    // output.AppendLine("</char>");
-                    // break;
+                    // output.AppendLine("</note>");
+                    break;
+                
+                case XOMarker xoMarker:
+                    output.AppendLine($"<char style=\"{xoMarker.Identifier}\">{xoMarker.OriginRef}</char>");
+                    break;
+                
+                case XTMarker xtMarker:
+                    break;
                 
                 case IOREndMarker _:
                 case SUPEndMarker _:
