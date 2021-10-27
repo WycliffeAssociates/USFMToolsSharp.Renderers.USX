@@ -65,6 +65,10 @@ namespace USFMToolsSharp.Renderers.USX
         {
             var output = new StringBuilder();
             var footnote = new StringBuilder();
+            if (ConfigurationUSX.USXVersion != "3.0" && ConfigurationUSX.USXVersion != "2.5")
+            {
+                throw new NotSupportedException("Only USX 3.0 and 2.5 are supported");
+            }
 
             switch (input)
             {
@@ -97,34 +101,28 @@ namespace USFMToolsSharp.Renderers.USX
                 case CMarker cMarker:
                     CurrentChapter = cMarker.Number;
 
-                    // USX 3.0
                     if (ConfigurationUSX.USXVersion.Equals("3.0"))
                     {
                         output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
                                           $"number=\"{cMarker.Number}\" " +
                                           $"sid=\"{CurrentBookCode} {cMarker.Number}\" />");
-                        foreach (Marker marker in input.Contents)
-                        {
-                            output.Append(RenderMarker(marker));
-                        }
-                        output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
                     }
-                    
-                    // USX 2.5
-                    else if (ConfigurationUSX.USXVersion.Equals("2.5"))
+                    else
                     {
                         output.AppendLine($"<chapter style=\"{cMarker.Identifier}\" " +
                                           $"number=\"{cMarker.Number}\" />");
-                        foreach (Marker marker in input.Contents)
-                        {
-                            output.Append(RenderMarker(marker));
-                        }
                     }
 
-                    else
+                    foreach (Marker marker in input.Contents)
                     {
-                        throw new UnsupportedVersionException($"Unsupported USX version: {ConfigurationUSX.USXVersion}");
+                        output.Append(RenderMarker(marker));
                     }
+
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                    {
+                        output.AppendLine($"<chapter eid=\"{CurrentBookCode} {CurrentChapter}\" />");
+                    }
+                    
                     break;
                 
                 case DMarker dMarker:
@@ -477,31 +475,27 @@ namespace USFMToolsSharp.Renderers.USX
                     // USX 3.0
                     if (ConfigurationUSX.USXVersion.Equals("3.0"))
                     {
-                        output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
+                        output.AppendLine($"<verse " +
                                           $"number=\"{vMarker.VerseNumber}\" " +
+                                          $"style=\"{vMarker.Identifier}\" " +
                                           $"sid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
-                        foreach (Marker marker in input.Contents)
-                        {
-                            output.Append(RenderMarker(marker));
-                        }
+                    }
+                    else
+                    {
+
+                        output.AppendLine($"<verse number=\"{vMarker.VerseNumber}\" style=\"{vMarker.Identifier}\" />");
+                    }
+
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+
+                    if (ConfigurationUSX.USXVersion.Equals("3.0"))
+                    {
                         output.AppendLine($"<verse eid=\"{CurrentBookCode} {CurrentChapter}:{vMarker.VerseNumber}\" />");
                     }
 
-                    // USX 2.5
-                    else if (ConfigurationUSX.USXVersion.Equals("2.5"))
-                    {
-                        output.AppendLine($"<verse style=\"{vMarker.Identifier}\" " +
-                                          $"number=\"{vMarker.VerseNumber}\" />");
-                        foreach (Marker marker in input.Contents)
-                        {
-                            output.Append(RenderMarker(marker));
-                        }
-                    }
-
-                    else
-                    {
-                        throw new UnsupportedVersionException($"Unsupported USX version: {ConfigurationUSX.USXVersion}");
-                    }
                     break;
                 
                 case XMarker xMarker:
@@ -521,6 +515,9 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case XTMarker xtMarker:
+                    break;
+                case WMarker wMarker:
+                    output.AppendLine($"<char style=\"w\">{wMarker.Term}</char>");
                     break;
                 
                 case IOREndMarker _:
