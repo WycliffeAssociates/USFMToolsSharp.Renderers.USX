@@ -73,7 +73,7 @@ namespace USFMToolsSharp.Renderers.USX
             switch (input)
             {
                 case BMarker bMarker:
-                    output.AppendLine($"<para style=\"{bMarker.Identifier}\"></para>");
+                    output.AppendLine($"<para style=\"{bMarker.Identifier}\"/>");
                     break;
                 
                 case BDMarker bdMarker:
