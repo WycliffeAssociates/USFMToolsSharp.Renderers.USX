@@ -5,6 +5,7 @@ namespace USFMToolsSharp.Renderers.USX
         public bool PartialUSX;
         public string USXVersion;
 
+
         public USXConfig()
         {
             PartialUSX = false;

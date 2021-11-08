@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using USFMToolsSharp.Models.Markers;
 
@@ -7,17 +8,18 @@ namespace USFMToolsSharp.Renderers.USX
 {
     public class USXRenderer
     {
+
         private List<string> UnrenderableTags;
         private readonly USXConfig ConfigurationUSX;
         private string CurrentBookCode;
         private int CurrentChapter;
-
         
         public USXRenderer()
         {
             UnrenderableTags = new List<string>();
             ConfigurationUSX = new USXConfig();
             CurrentChapter = 1;
+
         }
 
         public USXRenderer(USXConfig config) : this()
@@ -60,7 +62,7 @@ namespace USFMToolsSharp.Renderers.USX
 
             return null;
         }
-        
+
         private string RenderMarker(Marker input)
         {
             var output = new StringBuilder();
@@ -549,4 +551,5 @@ namespace USFMToolsSharp.Renderers.USX
             return output.ToString();
         }
     }
+
 }
