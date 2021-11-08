@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\USFMToolsSharp\USFMToolsSharp\USFMToolsSharp.csproj" />
+    <PackageReference Include="USFMToolsSharp" Version="1.7.0" />
   </ItemGroup>
 
 </Project>
