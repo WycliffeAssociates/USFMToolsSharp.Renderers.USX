@@ -30,7 +30,7 @@
 
 
   <ItemGroup>
-    <ProjectReference Include="..\..\USFMToolsSharp\USFMToolsSharp\USFMToolsSharp.csproj" />
+    <PackageReference Include="USFMToolsSharp" Version="1.8.0" />
   </ItemGroup>
 
 </Project>
