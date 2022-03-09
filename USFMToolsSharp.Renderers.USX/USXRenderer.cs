@@ -574,12 +574,6 @@ namespace USFMToolsSharp.Renderers.USX
             
             return output.ToString();
         }
-        private static bool IsModifiedFootnoteMarker(Marker input)
-        {
-                return input is FRMarker || input is FREndMarker || input is FKMarker
-            || input is FQMarker || input is FQEndMarker || input is FQAMarker
-            || input is FQAEndMarker || input is FPMarker || input is FVMarker || input is FVEndMarker;
-        }
     }
 
 }
