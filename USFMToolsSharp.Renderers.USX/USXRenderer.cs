@@ -151,15 +151,15 @@ namespace USFMToolsSharp.Renderers.USX
                 case FMarker fMarker:
                     // For USX 3.0, optional "Category" attribute can be added: https://ubsicap.github.io/usx/v3.0.0/notes.html#footnote-note
                     
-                    // output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
-                    //                   $"caller=\"{fMarker.FootNoteCaller}\">");
-                    //
-                    // foreach (Marker marker in input.Contents)
-                    // {
-                    //     output.Append(RenderMarker(marker));
-                    // }
-                    //
-                    // output.AppendLine("</note>");
+                    output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
+                                       $"caller=\"{fMarker.FootNoteCaller}\">");
+                    
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    
+                    output.AppendLine("</note>");
                     break;
                 
                 case FKMarker fkMarker:
@@ -167,12 +167,30 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case FPMarker fpMarker:
+                    output.AppendLine($"<char style=\"{fpMarker.Identifier}\">");
+                    foreach(var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
                     break;
                 
                 case FQMarker fqMarker:
+                    output.AppendLine($"<char style=\"{fqMarker.Identifier}\">");
+                    foreach(var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
                     break;
                 
                 case FQAMarker fqaMarker:
+                    output.AppendLine($"<char style=\"{fqaMarker.Identifier}\">");
+                    foreach(var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
                     break;
                 
                 case FRMarker frMarker:
@@ -180,6 +198,12 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 
                 case FTMarker ftMarker:
+                    output.AppendLine($"<char style=\"{ftMarker.Identifier}\">");
+                    foreach(var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
                     break;
                 
                 case HMarker hMarker:
