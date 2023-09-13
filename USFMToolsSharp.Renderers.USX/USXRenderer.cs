@@ -547,7 +547,15 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 case PNMarker pnMarker:
                     output.AppendLine($"<char style=\"{pnMarker.Identifier}\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
+                    break;
+                case ADDMarker addMarker:
+                    output.AppendLine($"<char style=\"{addMarker.Identifier}\">");
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
