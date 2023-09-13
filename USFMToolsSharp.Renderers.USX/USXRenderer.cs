@@ -545,6 +545,14 @@ namespace USFMToolsSharp.Renderers.USX
                 case WMarker wMarker:
                     output.AppendLine($"<char style=\"w\">{wMarker.Term}</char>");
                     break;
+                case PNMarker pnMarker:
+                    output.AppendLine($"<char style=\"{pnMarker.Identifier}\">");
+                    foreach (Marker marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
+                    break;
                 
                 case IOREndMarker _:
                 case SUPEndMarker _:
@@ -565,6 +573,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case FEndMarker _:
                 case VPMarker _:
                 case VPEndMarker _:
+                case PNEndMarker _:
                     break;
                     
                 default:
