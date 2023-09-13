@@ -9,7 +9,7 @@ namespace USFMToolsSharp.Renderers.USX
     public class USXRenderer
     {
 
-        private List<string> UnrenderableTags;
+        public List<string> UnrenderableTags;
         private readonly USXConfig ConfigurationUSX;
         private string CurrentBookCode;
         private int CurrentChapter;
@@ -561,7 +561,26 @@ namespace USFMToolsSharp.Renderers.USX
                     }
                     output.AppendLine("</char>");
                     break;
-                
+                case SPMarker spMarker:
+                    output.AppendLine($"<para style=\"{spMarker.Identifier}\">{spMarker.Speaker}</para>");
+                    break;
+                case RMarker rMarker:
+                    output.AppendLine($"<para style=\"{rMarker.Identifier}\">");
+                    foreach (var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</para>");
+                    break;
+                case MMarker mMarker:
+                    output.AppendLine($"<para style=\"{mMarker.Identifier}\">");
+                    foreach (var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</para>");
+                    break;
+
                 case IOREndMarker _:
                 case SUPEndMarker _:
                 case NDEndMarker _:
