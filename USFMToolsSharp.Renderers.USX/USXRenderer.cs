@@ -562,12 +562,12 @@ namespace USFMToolsSharp.Renderers.USX
                     output.AppendLine("</char>");
                     break;
                 case TLMarker tlMarker:
-                    output.AppendLine($"<para style=\"{tlMarker.Identifier}\">");
+                    output.AppendLine($"<char style=\"{tlMarker.Identifier}\">");
                     foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
-                    output.AppendLine("</para>");
+                    output.AppendLine("</char>");
                     break;
                 
                 case SPMarker spMarker:
