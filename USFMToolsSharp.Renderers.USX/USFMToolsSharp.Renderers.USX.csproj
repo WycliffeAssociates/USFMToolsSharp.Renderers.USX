@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.4.0</Version>
+    <Version>0.5.0</Version>
     <Authors>@Thundelly, @rbnswartz</Authors>
     <Company>Wycliffe Associates</Company>
     <RepositoryUrl>https://github.com/WycliffeAssociates/USFMToolsSharp.Renderers.USX</RepositoryUrl>
