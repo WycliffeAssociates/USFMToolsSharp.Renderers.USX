@@ -581,13 +581,26 @@ namespace USFMToolsSharp.Renderers.USX
                     }
                     output.AppendLine("</para>");
                     break;
-                case MMarker mMarker:
-                    output.AppendLine($"<para style=\"{mMarker.Identifier}\">");
+                case PMMarker:
+                case PMOMarker:
+                case PMCMarker:
+                case MMarker:
+                case MIMarker:
+                case REMMarker:
+                    output.AppendLine($"<para style=\"{input.Identifier}\">");
                     foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
                     output.AppendLine("</para>");
+                    break;
+                case FLMarker:
+                    output.AppendLine("<char style=\"fl\">");
+                    foreach(var marker in input.Contents)
+                    {
+                        output.Append(RenderMarker(marker));
+                    }
+                    output.AppendLine("</char>");
                     break;
 
                 case IOREndMarker _:
@@ -608,6 +621,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case BKEndMarker _:
                 case FEndMarker _:
                 case VPMarker _:
+                case NBMarker _:
                 case VPEndMarker _:
                 case PNEndMarker _:
                     break;
