@@ -1,0 +1,42 @@
+name: .NET build, test, nuget push
+
+on:
+  push:
+    branches: [ master ]
+    tags:
+      - "*"
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore -c Release
+      - name: Test
+        run: dotnet test -c Release
+      - name: Load secret
+        if: contains( github.ref, 'refs/tags/v' )
+        uses: 1password/load-secrets-action@v1
+        with:
+          # Export loaded secrets as environment variables
+          export-env: true
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+          NUGET_TOKEN: "op://DevOps/nuget-push-token/credential"
+      - name: Push to Nuget if tagged
+        if: contains( github.ref, 'refs/tags/v' )
+        run:  |
+          cd ./USFMToolsSharp.Renderers.USX/bin/Release/ && \
+          PKG_NAME=$(ls *.nupkg) && \
+          dotnet nuget push $PKG_NAME -k $NUGET_TOKEN -s https://api.nuget.org/v3/index.json
+        env:
+          NUGET_TOKEN: ${{ env.NUGET_TOKEN }}

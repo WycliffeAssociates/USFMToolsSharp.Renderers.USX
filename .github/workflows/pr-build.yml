@@ -1,0 +1,23 @@
+name: Build on PR
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Restore dependencies
+        run: dotnet restore USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj
+      - name: Build
+        run: dotnet build USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj --configuration Release --no-restore
+      - name: Test
+        run: dotnet test USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj --no-restore --no-build
