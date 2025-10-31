@@ -152,20 +152,22 @@ var config3 = new USXConfig
 
 ## Supported USFM Markers
 
-The renderer supports a comprehensive set of USFM markers including:
+The renderer supports a comprehensive set of USFM markers. Below is a representative list of the most commonly used markers:
 
-- **Identification**: `\id`, `\ide`, `\h`, `\toc1`, `\toc2`, `\toc3`
+- **Identification**: `\id`, `\ide`, `\h`, `\toc1`, `\toc2`, `\toc3`, `\usfm`
 - **Titles and Headings**: `\mt`, `\ms`, `\s`, `\imt`
 - **Chapters and Verses**: `\c`, `\v`
-- **Paragraphs**: `\p`, `\m`, `\pi`, `\mi`, `\q`, `\qc`, `\qm`, `\qr`, `\li`, `\b`, `\d`, `\sp`, `\r`, `\pm`, `\pmo`, `\pmc`, `\rem`
-- **Character Styles**: `\bd`, `\bdit`, `\it`, `\em`, `\sc`, `\no`, `\nd`, `\add`, `\tl`, `\pn`, `\w`, `\qs`
-- **Footnotes**: `\f`, `\fr`, `\fk`, `\ft`, `\fq`, `\fqa`, `\fp`, `\fl`
-- **Cross References**: `\x`, `\xo`, `\xt`
+- **Paragraphs**: `\p`, `\m`, `\pi`, `\mi`, `\q`, `\qc`, `\qm`, `\qr`, `\li`, `\b`, `\d`, `\sp`, `\r`, `\pm`, `\pmo`, `\pmc`, `\rem`, `\nb`, `\vp`
+- **Character Styles**: `\bd`, `\bdit`, `\it`, `\em`, `\sc`, `\no`, `\nd`, `\add`, `\tl`, `\pn`, `\w`, `\qs`, `\bk`
+- **Footnotes**: `\f`, `\fr`, `\fk`, `\ft`, `\fq`, `\fqa`, `\fp`, `\fl`, `\fv`
+- **Cross References**: `\x`, `\xo`, `\xt`, `\rq`
 - **Tables**: Table elements with `\tr`, `\th`, `\thr`, `\tc`, `\tcr`
+
+> **Note**: This is not an exhaustive list. The renderer handles additional USFM markers and their corresponding end markers. Check the [source code](USFMToolsSharp.Renderers.USX/USXRenderer.cs) for the complete list of supported markers.
 
 ## Dependencies
 
-- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp) (>= 1.18.0)
+- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp) (v1.18.0)
 
 ## Related Projects
 
