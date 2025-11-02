@@ -9,7 +9,6 @@ USFMToolsSharp.Renderers.USX is a .NET library that provides rendering capabilit
 ## Features
 
 - ✅ Support for USX 2.5 and 3.0 specifications
-- ✅ Comprehensive USFM marker support
 - ✅ Configurable rendering options
 - ✅ Partial USX output support (excluding XML declaration and root element)
 - ✅ Built on .NET 8.0
