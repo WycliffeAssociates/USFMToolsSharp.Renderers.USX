@@ -130,7 +130,7 @@ The `USXConfig` class provides the following configuration options:
 
 ## Dependencies
 
-- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp) (v1.18.0)
+- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp)
 
 ## Related Projects
 
