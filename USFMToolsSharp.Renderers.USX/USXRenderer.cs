@@ -2,12 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using USFMToolsSharp.Models;
 using USFMToolsSharp.Models.Markers;
 
 namespace USFMToolsSharp.Renderers.USX
 {
     public class USXRenderer
     {
+        private const int DefaultHierarchyIndex = 0;
 
         public List<string> UnrenderableTags;
         private readonly USXConfig ConfigurationUSX;
@@ -39,7 +41,7 @@ namespace USFMToolsSharp.Renderers.USX
                 output.AppendLine($"<usx version=\"{ConfigurationUSX.USXVersion}\">");
             }
 
-            foreach (Marker marker in input.Contents)
+            foreach (var marker in input.Hierarchies[DefaultHierarchyIndex].Contents)
             {
                 output.Append(RenderMarker(marker));
             }
@@ -54,16 +56,16 @@ namespace USFMToolsSharp.Renderers.USX
 
         private string GetEncoding(USFMDocument input)
         {
-            var encodingSearch = input.GetChildMarkers<IDEMarker>();
+            var encodingSearch = input.Hierarchies[DefaultHierarchyIndex].GetChildMarkers<IDEMarker>();
             if (encodingSearch.Count > 0)
             {
-                return encodingSearch[0].Encoding;
+                return encodingSearch[0].As<IDEMarker>().Encoding;
             }
 
             return null;
         }
 
-        private string RenderMarker(Marker input)
+        private string RenderMarker(HierarchyNode input)
         {
             var output = new StringBuilder();
             var footnote = new StringBuilder();
@@ -72,7 +74,7 @@ namespace USFMToolsSharp.Renderers.USX
                 throw new NotSupportedException("Only USX 3.0 and 2.5 are supported");
             }
 
-            switch (input)
+            switch (input.Marker)
             {
                 case BMarker bMarker:
                     output.AppendLine($"<para style=\"{bMarker.Identifier}\"/>");
@@ -81,7 +83,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case BDMarker bdMarker:
                     output.AppendLine($"<char style=\"{bdMarker.Identifier}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -92,7 +94,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case BDITMarker bditMarker:
                     output.AppendLine($"<char style=\"{bditMarker.Identifier}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -115,7 +117,7 @@ namespace USFMToolsSharp.Renderers.USX
                                           $"number=\"{cMarker.Number}\" />");
                     }
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -130,7 +132,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case DMarker dMarker:
                     output.AppendLine($"<para style=\"{dMarker.Identifier}\">{dMarker.Description}</para>");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -140,7 +142,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case EMMarker emMarker:
                     output.AppendLine($"<char style=\"{emMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -154,7 +156,7 @@ namespace USFMToolsSharp.Renderers.USX
                     output.AppendLine($"<note style=\"{fMarker.Identifier}\" " +
                                        $"caller=\"{fMarker.FootNoteCaller}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -168,7 +170,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case FPMarker fpMarker:
                     output.AppendLine($"<char style=\"{fpMarker.Identifier}\">");
-                    foreach(var marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -177,7 +179,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case FQMarker fqMarker:
                     output.AppendLine($"<char style=\"{fqMarker.Identifier}\">");
-                    foreach(var marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -186,7 +188,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case FQAMarker fqaMarker:
                     output.AppendLine($"<char style=\"{fqaMarker.Identifier}\">");
-                    foreach(var marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -199,7 +201,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case FTMarker ftMarker:
                     output.AppendLine($"<char style=\"{ftMarker.Identifier}\">");
-                    foreach(var marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -220,7 +222,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                     CurrentBookCode = bookCode;
                     
-                    output.AppendLine($"<book style=\"{input.Identifier}\" code=\"{bookCode}\">{bibleVersion}</book>");
+                    output.AppendLine($"<book style=\"{input.Marker.Identifier}\" code=\"{bookCode}\">{bibleVersion}</book>");
                     break;
                 
                 case IMTMarker imtMarker:
@@ -232,7 +234,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case ITMarker itMarker:
                     output.AppendLine($"<char style=\"{itMarker.Identifier}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -243,7 +245,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case LIMarker liMarker:
                     output.AppendLine($"<para style=\"{liMarker.Identifier}{liMarker.Depth}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -253,7 +255,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case MSMarker msMarker:
                     output.AppendLine($"<para style=\"{msMarker.Identifier}{msMarker.Weight}\">{msMarker.Heading}</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -261,7 +263,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                 case MTMarker mtMarker:
                     output.AppendLine($"<para style=\"{mtMarker.Identifier}{mtMarker.Weight}\">{mtMarker.Title}</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -269,7 +271,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case NDMarker ndMarker:
                     output.AppendLine($"<char style=\"{ndMarker.Identifier}\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -280,7 +282,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case NOMarker noMarker:
                     output.AppendLine($"<char style=\"{noMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -293,7 +295,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                     output.AppendLine($"<para style=\"{pMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -304,7 +306,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case PIMarker piMarker:
                     output.AppendLine($"<para style=\"{piMarker.Identifier}{piMarker.Depth}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -317,7 +319,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                     output.AppendLine($"<para style=\"{qMarker.Identifier}{qMarker.Depth}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -328,7 +330,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case QCMarker qcMarker:
                     output.AppendLine($"<para style=\"{qcMarker.Identifier}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -339,7 +341,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case QMMarker qmMarker:
                     output.AppendLine($"<para style=\"{qmMarker.Identifier}{qmMarker.Depth}\">");
                     
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -350,7 +352,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case QRMarker qrMarker:
                     output.AppendLine($"<para style=\"{qrMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -361,7 +363,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case QSMarker qsMarker:
                     output.AppendLine($"<char style=\"{qsMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -373,7 +375,7 @@ namespace USFMToolsSharp.Renderers.USX
                     output.AppendLine($"<para style=\"{sMarker.Identifier}{sMarker.Weight}\">");
                     output.AppendLine($"{sMarker.Text}");
                     output.AppendLine("</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -382,7 +384,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case SCMarker scMarker:
                     output.AppendLine($"<char style=\"{scMarker.Identifier}\">");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -395,7 +397,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                     output.AppendLine("<Table>");
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -408,7 +410,7 @@ namespace USFMToolsSharp.Renderers.USX
                     
                     output.AppendLine($"<cell style=\"{tcMarker.Identifier}{tcMarker.ColumnPosition}\" " +
                                         $"align=\"start\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -421,7 +423,7 @@ namespace USFMToolsSharp.Renderers.USX
                     
                     output.AppendLine($"<cell style=\"{tcrMarker.Identifier}{tcrMarker.ColumnPosition}\" " +
                                         $"align=\"end\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -438,7 +440,7 @@ namespace USFMToolsSharp.Renderers.USX
                     
                     output.AppendLine($"<cell style=\"{thMarker.Identifier}{thMarker.ColumnPosition}\" " +
                                       $"align=\"start\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -451,7 +453,7 @@ namespace USFMToolsSharp.Renderers.USX
                     
                     output.AppendLine($"<cell style=\"{thrMarker.Identifier}{thrMarker.ColumnPosition}\" " +
                                       $"align=\"end\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -461,7 +463,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case TOC1Marker toc1Marker:
                     output.AppendLine($"<para style=\"{toc1Marker.Identifier}\">{toc1Marker.LongTableOfContentsText}</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -469,7 +471,7 @@ namespace USFMToolsSharp.Renderers.USX
 
                 case TOC2Marker toc2Marker:
                     output.AppendLine($"<para style=\"{toc2Marker.Identifier}\">{toc2Marker.ShortTableOfContentsText}</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -477,7 +479,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case TOC3Marker toc3Marker:
                     output.AppendLine($"<para style=\"{toc3Marker.Identifier}\">{toc3Marker.BookAbbreviation}</para>");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -485,7 +487,7 @@ namespace USFMToolsSharp.Renderers.USX
                 
                 case TRMarker trMarker:
                     output.AppendLine($"<row style=\"{trMarker.Identifier}\">");
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -512,7 +514,7 @@ namespace USFMToolsSharp.Renderers.USX
                         output.AppendLine($"<verse number=\"{vMarker.VerseNumber}\" style=\"{vMarker.Identifier}\" />");
                     }
 
-                    foreach (Marker marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -528,7 +530,7 @@ namespace USFMToolsSharp.Renderers.USX
                     // output.AppendLine($"<note style=\"{xMarker.Identifier}\" " +
                     //                   $"caller=\"{xMarker.CrossRefCaller}\">");
                     //
-                    // foreach (Marker marker in input.Contents)
+                    // foreach (var marker in input.Contents)
                     // {
                     //     output.Append(RenderMarker(marker));
                     // }
@@ -587,7 +589,7 @@ namespace USFMToolsSharp.Renderers.USX
                 case MMarker:
                 case MIMarker:
                 case REMMarker:
-                    output.AppendLine($"<para style=\"{input.Identifier}\">");
+                    output.AppendLine($"<para style=\"{input.Marker.Identifier}\">");
                     foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
@@ -596,7 +598,7 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                 case FLMarker:
                     output.AppendLine("<char style=\"fl\">");
-                    foreach(var marker in input.Contents)
+                    foreach (var marker in input.Contents)
                     {
                         output.Append(RenderMarker(marker));
                     }
@@ -627,7 +629,7 @@ namespace USFMToolsSharp.Renderers.USX
                     break;
                     
                 default:
-                    UnrenderableTags.Add(input.Identifier);
+                    UnrenderableTags.Add(input.Marker.Identifier);
                     break;
             }
             

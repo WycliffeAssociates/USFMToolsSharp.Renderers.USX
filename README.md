@@ -101,7 +101,7 @@ The `USXConfig` class provides the following configuration options:
 
 ### Prerequisites
 
-- [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) or later
 
 ### Build Instructions
 
@@ -130,7 +130,11 @@ The `USXConfig` class provides the following configuration options:
 
 ## Dependencies
 
-- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp)
+- [USFMToolsSharp](https://github.com/WycliffeAssociates/USFMToolsSharp) 2.0 or later
+
+This package targets .NET 10. USFMToolsSharp 2.x parses a document into several hierarchies; the renderer walks
+the default hierarchy (`USFMDocument.Hierarchies[0]`). If you are upgrading from 0.6.x (USFMToolsSharp 1.x), the
+public API is unchanged, but you must also move to USFMToolsSharp 2.x and .NET 10.
 
 ## Related Projects
 
