@@ -16,8 +16,8 @@ jobs:
         with:
           dotnet-version: '10.0.x'
       - name: Restore dependencies
-        run: dotnet restore USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj
+        run: dotnet restore
       - name: Build
-        run: dotnet build USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj --configuration Release --no-restore
+        run: dotnet build --configuration Release --no-restore
       - name: Test
-        run: dotnet test USFMToolsSharp.Renderers.USX/USFMToolsSharp.Renderers.USX.csproj --no-restore --no-build
+        run: dotnet test --configuration Release --no-restore --no-build

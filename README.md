@@ -117,12 +117,17 @@ The `USXConfig` class provides the following configuration options:
    dotnet build
    ```
 
-3. Build in Release mode:
+3. Run the tests:
+   ```bash
+   dotnet test
+   ```
+
+4. Build in Release mode:
    ```bash
    dotnet build -c Release
    ```
 
-4. Create a NuGet package:
+5. Create a NuGet package:
    ```bash
    dotnet pack -c Release
    ```

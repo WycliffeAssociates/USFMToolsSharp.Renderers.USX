@@ -41,9 +41,12 @@ namespace USFMToolsSharp.Renderers.USX
                 output.AppendLine($"<usx version=\"{ConfigurationUSX.USXVersion}\">");
             }
 
-            foreach (var marker in input.Hierarchies[DefaultHierarchyIndex].Contents)
+            if (input.Hierarchies.Count > 0)
             {
-                output.Append(RenderMarker(marker));
+                foreach (var marker in input.Hierarchies[DefaultHierarchyIndex].Contents)
+                {
+                    output.Append(RenderMarker(marker));
+                }
             }
 
             if (!ConfigurationUSX.PartialUSX)
@@ -56,6 +59,11 @@ namespace USFMToolsSharp.Renderers.USX
 
         private string GetEncoding(USFMDocument input)
         {
+            if (input.Hierarchies.Count == 0)
+            {
+                return null;
+            }
+
             var encodingSearch = input.Hierarchies[DefaultHierarchyIndex].GetChildMarkers<IDEMarker>();
             if (encodingSearch.Count > 0)
             {
